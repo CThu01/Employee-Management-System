@@ -1,6 +1,9 @@
 package com.cthu.employee.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +22,7 @@ public class EmployeeController {
 
 	@GetMapping("/")
 	public String index(Model model) {
-		model.addAttribute("employeeList", employeeService.getAllEmployee());
-		return "index";
+		return findPagenated(1, model);
 	}
 	
 	@GetMapping("employeeForm")
@@ -49,10 +51,42 @@ public class EmployeeController {
 		return "redirect:/";
 	}
 	
+	@GetMapping("page/{pageNo}")
+	public String findPagenated(@PathVariable("pageNo") int pageNo,Model model) {
+		
+		int pageSize = 5;
+		Page<Employee> page = employeeService.findPagenated(pageNo, pageSize);
+		List<Employee> listEmployees = page.getContent();
+		
+		model.addAttribute("currentPage", pageNo);
+		model.addAttribute("totalPages", page.getTotalPages());
+		model.addAttribute("totalItems", page.getTotalElements());
+		model.addAttribute("listEmployee",listEmployees);
+		
+		return "index";
+	}
+	
 	
 	
 	
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
